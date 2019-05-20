@@ -31,11 +31,11 @@ int main(void) {
 	int fd_entrada = fileno(entrada);
 	int fd_saida = fileno(saida);
 
-	char* chave = "sara";
+	char* chave = "LIMAO";
 
 	int cifraFinal = cifra(fd_entrada, fd_saida, chave);
+	putchar('\n');
 
 	fclose(entrada);
 	fclose(saida);
-	putchar('\n');
 }

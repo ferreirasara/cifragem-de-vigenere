@@ -40,24 +40,44 @@ le_arquivo:
 	cmp 	dword[c], '0'			; nao sei como compara com EOF, ai precisa ter um '0' no final do arquivo
 	je 		termina 				; se encontra o zero, sai da sub-rotina
 
+	; cmp 	dword[c], ' '     		; se e um espaco em branco, escreve no arquivo sem fazer cifragem
+	; je 		escreve_arquivo
+
 	pop 	edx 					; volta para edx o enredero inicial da chave
 	jmp 	le_chave
 
+
+
 faz_cifra:
 	;add 	dword[c], 1 			; funciona isso de somar um número com o cod ascii :)
+	mov 	eax, 0
+	add 	eax, dword[chave]
+	mov 	ebx, 0
+	add 	ebx, dword[c]
 
-	push 	dword[c]
+	add   	eax, ebx
+
+	; push 	eax
+	; push 	str_c
+	; call 	printf
+	; add 	esp, 8
+
+
+	xor 	edx, edx
+	mov 	ebx, 26 				; para fazer o % 26
+	div 	ebx
+	
+	add 	edx, 65
+	
+	push 	edx
 	push 	str_c
 	call 	printf
 	add 	esp, 8
-	push 	dword[chave]
-	push 	str_c
-	call 	printf
-	add 	esp, 8
+
 	jmp 	le_arquivo
 
-escreve_arquivo:
-
+; escreve_arquivo:
+; 	jmp 	le_arquivo
 
 termina:
 	pop     edi
