@@ -13,29 +13,27 @@ int main(void) {
 	char c;
 
 	entrada = fopen("entrada.txt", "r");
-	saida = fopen("saida.txt", "a");
+	saida = fopen("saida.txt", "w");
 
 	if (entrada == NULL) {
 		puts("O arquivo de entrada não foi criado.");
 		return EXIT_FAILURE;
-	} else {
-		// puts("Arquivo de entrada criado com sucesso.");
 	}
 	if (saida == NULL) {
 		puts("O arquivo de saida não foi criado.");
 		return EXIT_FAILURE;
-	} else {
-		// puts("Arquivo de saida criado com sucesso.");
 	}
 
 	int fd_entrada = fileno(entrada);
 	int fd_saida = fileno(saida);
 
-	char* chave = "LIMAO";
+	// printf("%d %d\n", fd_entrada, fd_saida);
+	char* chave = "LIMAOLIMAOLIMAOLIMAO";
+	// fprintf(saida, "%s\n", chave);
 
 	int cifraFinal = cifra(fd_entrada, fd_saida, chave);
 	putchar('\n');
 
 	fclose(entrada);
-	fclose(saida);
+	// fclose(saida);
 }
