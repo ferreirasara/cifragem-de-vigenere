@@ -214,6 +214,10 @@ zera_edi:
 	jmp 	le_arquivo
 
 faz_cifra:
+	; --------------------------------------------------------------------------
+	; FORMULA PARA CIFRAR Cifra = Letra + Chave (mod 26)
+	; --------------------------------------------------------------------------
+
 	mov 	eax, dword[num_letra]	; coloca em eax o numero correpondente a letra
 	mov 	ebx, dword[num_chave]	; coloca em eax o numero correpondente a chave'
 	mov 	ecx, 26 				; coloca 26 em eax para obter o modulo
