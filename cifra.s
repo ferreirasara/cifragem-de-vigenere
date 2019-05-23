@@ -199,11 +199,11 @@ le_arquivo:
 	LETRA2NUM 	dword[letra], dword[num_letra]
 
 le_chave:
-	inc 	edi
+	inc 	edi 					; incrementa para o proximo caractere
 	mov 	edx, [ebp + 16]			; endereco inicial da chave
-	mov 	bl, byte[edx + edi]	; caractere da vez
-	mov 	byte[chave], bl		; move o caractere pra variavel chave
-	cmp 	byte[chave], 0 		; terminador nulo?
+	mov 	bl, byte[edx + edi]		; caractere da vez
+	mov 	byte[chave], bl			; move o caractere pra variavel chave
+	cmp 	byte[chave], 0 			; terminador nulo?
 	je 		zera_edi 				; se a chave acabou, zera o edi e volta para o comeco da mesma
 	; imprime dword[chave]
 	CHAVE2NUM 	byte[chave], dword[num_chave]
@@ -214,34 +214,44 @@ zera_edi:
 	jmp 	le_arquivo
 
 faz_cifra:
-	mov 	eax, dword[num_letra]
-	mov 	ebx, dword[num_chave]
-	mov 	ecx, 26
+	mov 	eax, dword[num_letra]	; coloca em eax o numero correpondente a letra
+	mov 	ebx, dword[num_chave]	; coloca em eax o numero correpondente a chave'
+	mov 	ecx, 26 				; coloca 26 em eax para obter o modulo
 
-	xor 	edx, edx
+	xor 	edx, edx				; zera edx para fazer a divisao
 
-	add 	eax, ebx
-	div 	ecx
+	add 	eax, ebx				; eax += ebx
+	div 	ecx						; eax / ecx
 
-	add 	edx, 65
+	add 	edx, 65					; soma 65 ao resto da divisao para obter o cod ascii
 
-	imprime 	edx
+	mov 	dword[cifra_pnt], edx   ; edx tem o CONTEUDO, a sys_call precisa de um ponteiro
+	; imprime 	edx
 
-	jmp 	le_arquivo
+escreve_arquivo:
+	mov 	eax, 4					; sys_write
+	; mov 	ebx, 1 					; std out (para teste)
+	mov 	ebx, dword[ebp + 12] 	; fd_saida
+	mov 	ecx, cifra_pnt 			; ponteiro para a letra cifrada
+	mov 	edx, 1 					; tamanho do que sera escrito (1 byte)
+	int 	80h						; kernel
+
+	jmp 	le_arquivo 				; faz todo o processo novamente
 
 termina:
-	pop     edi
+	pop     edi 					; retira da pilha os registradores que foram "salvos" no comeco da sub-rotina
 	pop     esi
     pop     ebx
 
-    mov     esp, ebp
+    mov     esp, ebp				
     pop     ebp
 
 section .bss
-	letra 		resd 1
-	chave 		resb 1
-	num_chave	resd 1
-	num_letra 	resd 1
+	letra 		resd 1 				; ira guardar o caractere da vez do arquivo
+	chave 		resb 1				; ira guardar o caractere da vez da chave'
+	num_chave	resd 1				; ira guardar o num correpondente a chave
+	num_letra 	resd 1				; ira guardar o num correpondente a letra
+	cifra_pnt	resd 1 				; PONTEIRO para a letra cifrada
 
 section .data
 	str_c	db '[%c]'
