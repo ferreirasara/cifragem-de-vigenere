@@ -46,13 +46,23 @@ int main(void) {
 	int fd_saida_decifra = fileno(saida_decifra);
 
 	// printf("%d %d\n", fd_entrada, fd_saida);
-	char* chave = "LIMAOLIMAOLIMAOLIMAO";
+	char* chave = "LIMAO";
 	// fprintf(saida, "%s\n", chave);
 
-	// int cifraFinal = cifra(fd_entrada_cifra, fd_saida_cifra, chave);
+	int cifraFinal = cifra(fd_entrada_cifra, fd_saida_cifra, chave);
 	// putchar('\n');
 	int decifraFinal = decifra(fd_entrada_decifra, fd_saida_decifra, chave);
-	putchar('\n');
+
+	if (cifraFinal == 0) {
+		puts("Cifragem com sucesso!");
+	} else {
+		puts("Algo deu errado na cifragem");
+	}
+	if (decifraFinal == 0) {
+		puts("Decifragem com sucesso!");
+	} else {
+		puts("Algo deu errado na decifragem");
+	}
 
 	fclose(entrada_cifra);
 	fclose(saida_cifra);
