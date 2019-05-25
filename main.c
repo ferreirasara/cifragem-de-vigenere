@@ -53,6 +53,11 @@ int main(void) {
 	// putchar('\n');
 	int decifraFinal = decifra(fd_entrada_decifra, fd_saida_decifra, chave);
 
+	fclose(entrada_cifra);
+	fclose(saida_cifra);
+	fclose(entrada_decifra);
+	fclose(saida_decifra);
+
 	if (cifraFinal == 0) {
 		puts("Cifragem com sucesso!");
 	} else {
@@ -63,9 +68,4 @@ int main(void) {
 	} else {
 		puts("Algo deu errado na decifragem");
 	}
-
-	fclose(entrada_cifra);
-	fclose(saida_cifra);
-	fclose(entrada_decifra);
-	fclose(saida_decifra);
 }

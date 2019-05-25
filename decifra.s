@@ -186,7 +186,10 @@ section .text
 	je 		desfaz_cifra
 	
 	cmp 	%1, ' '
-	je 		escreve_arquivo_espaco
+	je 		escreve_arquivo_espaco	
+
+	cmp 	%1, 10
+	je 		escreve_arquivo_fim_de_linha
 
 	jne 	termina_erro
 %endmacro
@@ -409,8 +412,8 @@ le_arquivo:
 	mov 	edx, 1					; tamanho (um caractere por vez)
 	int 	80h						; chama o kernel
 
-	cmp 	dword[letra], '0'		; nao sei como compara com EOF, ai precisa ter um '0' no final do arquivo
-	; cmp 	eax, 0
+	; cmp 	dword[letra], '0'		; nao sei como compara com EOF, ai precisa ter um '0' no final do arquivo
+	cmp 	eax, 0
 	je 		termina_certo			; se encontra o zero, sai da sub-rotina
 	; imprime dword[letra]
 	; cmp 	dword[c], ' '     		; se e um espaco em branco, escreve no arquivo sem fazer cifragem
@@ -448,6 +451,18 @@ escreve_arquivo:
 
 escreve_arquivo_espaco:
 	mov 	dword[cifra_pnt], ' '
+	dec 	edi
+	mov 	eax, 4					; sys_write
+	; mov 	ebx, 1 					; std out (para teste)
+	mov 	ebx, dword[ebp + 12] 	; fd_saida
+	mov 	ecx, cifra_pnt 			; ponteiro para a letra cifrada
+	mov 	edx, 1 					; tamanho do que sera escrito (1 byte)
+	int 	80h						; kernel
+
+	jmp 	le_chave 				; faz todo o processo novamente
+
+escreve_arquivo_fim_de_linha:
+	mov 	dword[cifra_pnt], 10
 	dec 	edi
 	mov 	eax, 4					; sys_write
 	; mov 	ebx, 1 					; std out (para teste)
