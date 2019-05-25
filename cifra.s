@@ -3,7 +3,7 @@ section .text
 
 %macro LETRA2NUM 2 		 			; macro que traduz a letra para um numero (de 0 a 25)
 	cmp		%1, 'A' 				; %1 tem a letra
-	mov 	%2, 0
+	mov 	%2, 0 					; %2 tera o numero
 	je 		faz_cifra	
 	cmp		%1, 'a' 
 	mov 	%2, 0
@@ -195,7 +195,7 @@ section .text
 %endmacro
 %macro CHAVE2NUM 2 		 			; macro que traduz a chave para um numero (de 0 a 25)
 	cmp		%1, 'A' 				; %1 tem a letra
-	mov 	%2, 0
+	mov 	%2, 0					; %2 tera o numero
 	je 		le_arquivo	
 	cmp		%1, 'a' 
 	mov 	%2, 0
@@ -387,14 +387,8 @@ cifra:
 	push 	esi
 	push 	edi
 
-	; mov 	edi, -1				; para percorrer a cheave
-
-	;mov 	esi, dword[ebp + 16]	; char* chave
-	;mov 	edx, dword[ebp + 12]	; int fd_saida
-
 zera_edi:
 	mov 	edi, -1					; percorre a chave
-	; jmp 	le_arquivo
 
 le_chave:
 	inc 	edi 					; incrementa para o proximo caractere
@@ -403,9 +397,8 @@ le_chave:
 	mov 	byte[chave], bl			; move o caractere pra variavel chave
 	cmp 	byte[chave], 0 			; terminador nulo?
 	je 		zera_edi 				; se a chave acabou, zera o edi e volta para o comeco da mesma
-	; imprime dword[chave]
+
 	CHAVE2NUM 	byte[chave], dword[num_chave]
-	; jmp 	faz_cifra 				; usa o cactere atual na cifragem
 
 le_arquivo:
 	mov 	eax, 3 					; sys_read
@@ -414,12 +407,9 @@ le_arquivo:
 	mov 	edx, 1					; tamanho (um caractere por vez)
 	int 	80h						; chama o kernel
 
-	; cmp 	dword[letra], '0'		; nao sei como compara com EOF, ai precisa ter um '0' no final do arquivo
-	cmp 	eax, 0
+	cmp 	eax, 0					; se encontrar o 'EOF', eax fica com 0
 	je 		termina_certo 			; se encontra o zero, sai da sub-rotina
-	; imprime dword[letra]
-	; cmp 	dword[c], ' '     		; se e um espaco em branco, escreve no arquivo sem fazer cifragem
-	; je 		escreve_arquivo
+
 	LETRA2NUM 	dword[letra], dword[num_letra]
 
 faz_cifra:
@@ -439,11 +429,9 @@ faz_cifra:
 	add 	edx, 65					; soma 65 ao resto da divisao para obter o cod ascii
 
 	mov 	dword[cifra_pnt], edx   ; edx tem o CONTEUDO, a sys_call precisa de um ponteiro
-	; imprime 	edx
 
 escreve_arquivo:
 	mov 	eax, 4					; sys_write
-	; mov 	ebx, 1 					; std out (para teste)
 	mov 	ebx, dword[ebp + 12] 	; fd_saida
 	mov 	ecx, cifra_pnt 			; ponteiro para a letra cifrada
 	mov 	edx, 1 					; tamanho do que sera escrito (1 byte)
@@ -452,10 +440,10 @@ escreve_arquivo:
 	jmp 	le_chave 				; faz todo o processo novamente
 
 escreve_arquivo_espaco:
-	mov 	dword[cifra_pnt], ' '
-	dec 	edi
+	mov 	dword[cifra_pnt], ' ' 	; insere o caractere de espaco em branco para ser escrito no arquivo
+	dec 	edi 					; decrementa o edi para voltar ao caractere antigo da chave
+
 	mov 	eax, 4					; sys_write
-	; mov 	ebx, 1 					; std out (para teste)
 	mov 	ebx, dword[ebp + 12] 	; fd_saida
 	mov 	ecx, cifra_pnt 			; ponteiro para a letra cifrada
 	mov 	edx, 1 					; tamanho do que sera escrito (1 byte)
@@ -464,8 +452,9 @@ escreve_arquivo_espaco:
 	jmp 	le_chave 				; faz todo o processo novamente
 
 escreve_arquivo_fim_de_linha:
-	mov 	dword[cifra_pnt], 10
-	dec 	edi
+	mov 	dword[cifra_pnt], 10  	; insere o caractere de fim de linha para ser escrito no arquivp
+	dec 	edi						; decrementa o edi para voltar ao caractere antigo da chave
+
 	mov 	eax, 4					; sys_write
 	; mov 	ebx, 1 					; std out (para teste)
 	mov 	ebx, dword[ebp + 12] 	; fd_saida
@@ -480,10 +469,10 @@ termina_certo:
 	pop     esi
     pop     ebx
 
-    mov     esp, ebp				
+    mov     esp, ebp
     pop     ebp
 
-    mov 	eax, 0
+    mov 	eax, 0					; retorno da funcao, tudo funcionou
     ret
 
 termina_erro:
@@ -494,7 +483,7 @@ termina_erro:
     mov     esp, ebp				
     pop     ebp
 
-    mov 	eax, -1
+    mov 	eax, -1 				; retorno da funcao, algo nao funcionou
     ret
 
 section .bss
@@ -503,6 +492,3 @@ section .bss
 	num_chave	resd 1				; ira guardar o num correpondente a chave
 	num_letra 	resd 1				; ira guardar o num correpondente a letra
 	cifra_pnt	resd 1 				; PONTEIRO para a letra cifrada
-
-section .data
-	str_c	db '[%c]'
