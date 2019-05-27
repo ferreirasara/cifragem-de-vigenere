@@ -6,8 +6,6 @@ int cifra(int fd_entrada, int fd_saida, const char* chave);
 int decifra(int fd_entrada, int fd_saida, const char* chave);
 
 int main(void) {
-	// int fd_entrada = open("entrada'.txt", O_RONLY);
-	// int fd_saida = open("saida.txt", O_WONLY);
 	FILE *entrada_cifra;
 	FILE *saida_cifra;
 	FILE *entrada_decifra;
@@ -45,12 +43,9 @@ int main(void) {
 	int fd_entrada_decifra = fileno(entrada_decifra);
 	int fd_saida_decifra = fileno(saida_decifra);
 
-	// printf("%d %d\n", fd_entrada, fd_saida);
 	char* chave = "LIMAO";
-	// fprintf(saida, "%s\n", chave);
 
 	int cifraFinal = cifra(fd_entrada_cifra, fd_saida_cifra, chave);
-	// putchar('\n');
 	int decifraFinal = decifra(fd_entrada_decifra, fd_saida_decifra, chave);
 
 	fclose(entrada_cifra);
