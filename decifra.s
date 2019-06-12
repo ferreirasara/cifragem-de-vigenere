@@ -185,7 +185,7 @@ section .text
 	mov 	%2, 25
 	je 		desfaz_cifra
 	
-	cmp 	%1, ' '
+	cmp 	%1, 32
 	je 		escreve_arquivo_espaco	
 
 	cmp 	%1, 10
@@ -441,7 +441,7 @@ escreve_arquivo:
 	jmp 	le_chave 				; faz todo o processo novamente
 
 escreve_arquivo_espaco:
-	mov 	dword[cifra_pnt], ' ' 	; insere o caractere de espaco em branco para ser escrito no arquivo
+	mov 	dword[cifra_pnt], 32 	; insere o caractere de espaco em branco para ser escrito no arquivo
 	dec 	edi 					; decrementa o edi para voltar ao caractere antigo da chave
 	mov 	eax, 4					; sys_write
 	mov 	ebx, dword[ebp + 12] 	; fd_saida
