@@ -1,3 +1,6 @@
+;	Código feito por Sara Cristina Ferreira e Cleberson Leandro Pertile
+;	Disciplina: Arquitetura e Organização de Computadores
+
 section .text
 	global decifra
 	extern printf
