@@ -5,62 +5,63 @@
 int cifra(int fd_entrada, int fd_saida, const char* chave);
 int decifra(int fd_entrada, int fd_saida, const char* chave);
 
-int main(void) {
-	FILE *entrada_cifra;
-	FILE *saida_cifra;
-	FILE *entrada_decifra;
-	FILE *saida_decifra;
-	char c;
+int main(int argc, char const *argv[]) {
+	FILE *entrada;
+	FILE *saida;
 
-	entrada_cifra = fopen("entrada_cifra.txt", "r");
-	saida_cifra = fopen("saida_cifra.txt", "w");
-
-	entrada_decifra = fopen("entrada_decifra.txt", "r");
-	saida_decifra = fopen("saida_decifra.txt", "w");
-
-	if (entrada_cifra == NULL) {
-		puts("Erro no arquivo de entrada da cifra.\n");
-		return EXIT_FAILURE;
-	}
-	if (entrada_decifra == NULL) {
-		puts("Erro no arquivo de entrada da decifra.\n");
-		return EXIT_FAILURE;
-	}
-
-	if (saida_cifra == NULL) {
-		puts("Erro no arquivo de saida da cifra.\n");
-		return EXIT_FAILURE;
+	if (argc != 4) {
+		if (argc == 2) {
+			if ((strncmp(argv[1], "-h", 2) == 0)) {
+				printf("Use vigenere [argumento] [chave] [arquivo de entrada]\n");
+				printf("[argumento]:\n\t-c Cifra o arquivo\n\t-d Decifra o arquivo\n\t-h Ajuda\n");
+				printf("[chave]:\n\tA string que sera utilizada para cifrar/decifrar o arquivo.\n");
+				printf("[arquivo de entrada]:\n\tO arquivo que contem a mensagem a ser cifrada/decifrada.\n");
+				printf("O arquivo cifrado/decifrado vai estar em \"out.txt\".\n");
+				return 0;
+			}
+		}
+		printf("Parametros invalidos.\n");
+		printf("Use vigenere -h para ajuda.\n");
+		return 0;
+	} else if (!((strncmp(argv[1], "-c", 2) == 0) || (strncmp(argv[1], "-d", 2) == 0) || (strncmp(argv[1], "-h", 2) == 0))) {
+		printf("Argumento \"%s\" invalido.\n", argv[1]);
+		printf("Use vigenere -h para ajuda.\n");
+		return 0;
 	}
 
-	if (saida_decifra == NULL) {
-		puts("Erro no arquivo de saida da decifra.\n");
-		return EXIT_FAILURE;
+	entrada = fopen(argv[3], "r");
+	if (entrada == NULL) {
+		printf("Falha ao abir arquivo de entrada. Verifique se o arquivo existe.\n");
+		return 0;
 	}
 
-	int fd_entrada_cifra = fileno(entrada_cifra);
-	int fd_saida_cifra = fileno(saida_cifra);
+	saida = fopen("out.txt", "w");
+	if (saida == NULL) {
+		printf("Falha ao criar arquivo de saida.\n");
+		return 0;
+	}	
 
-	int fd_entrada_decifra = fileno(entrada_decifra);
-	int fd_saida_decifra = fileno(saida_decifra);
+	int fd_entrada = fileno(entrada);
+	int fd_saida = fileno(saida);
 
-	char* chave = "LIMAO";
+	const char* chave = argv[2];
 
-	int cifraFinal = cifra(fd_entrada_cifra, fd_saida_cifra, chave);
-	int decifraFinal = decifra(fd_entrada_decifra, fd_saida_decifra, chave);
+	int resultado = -1;
 
-	fclose(entrada_cifra);
-	fclose(saida_cifra);
-	fclose(entrada_decifra);
-	fclose(saida_decifra);
+	if (strncmp(argv[1], "-d", 2) == 0) {
+		resultado = decifra(fd_entrada, fd_saida, chave);
+	} else if (strncmp(argv[1], "-c", 2) == 0) {
+		resultado = cifra(fd_entrada, fd_saida, chave);
+	}
 
-	if (cifraFinal == 0) {
-		puts("Cifragem com sucesso!");
+	if (resultado == 0) {
+		puts("Sucesso!");
 	} else {
-		puts("Algo deu errado na cifragem");
+		puts("Ocorreu algum problema.");
 	}
-	if (decifraFinal == 0) {
-		puts("Decifragem com sucesso!");
-	} else {
-		puts("Algo deu errado na decifragem");
-	}
+
+	fclose(entrada);
+	fclose(saida);
+
+	return 0;
 }
