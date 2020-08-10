@@ -20,5 +20,3 @@ Após compilado, use:
 `./vigenere [argumento] [chave] [arquivo de entrada]`
 
 Ou `./vigenere -h` para ver a ajuda.
-
-# Como funciona
